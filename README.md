@@ -8,7 +8,7 @@ node server.js
 
 abrir no navegador o localhost:3030
 ```
-#Stack
+## Stack
 -JavaScript
 -HTML
 -CSS
