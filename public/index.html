@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <form id="chat">
+        <div class="titulo">Chat em Tempo Real</div>
+        <input type="text" name="username" placeholder="Digite seu usuário">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite sua mensagem">
+        <button type="submit">Enviar</button>
+        <button class="floating-btn">
+            R
+        </button>
+    </form>
+
+    <div class="social-panel-container">
+        <div class="social-panel">
+            <p>Criado Por <i class="fa fa-heart"></i> by
+                <a target="_blank">Fabricio J</a></p>
+            <h4>Confira minhas redes :)</h4>
+            <ul>
+                <li>
+                    <a href="https://twitter.com/fabricio9910" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://linkedin.com/in/fabriciojuliano" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/fabriciojlm/" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://instagram.com/fabriciojlm" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+
+    <script type="text/javascript">
+    var socket = io('http://localhost:3030')
+
+    function renderMessage(message) {
+        $('.messages').append('<div class="message"><strong>'+ message.author +'</strong>:'+ message.message +'</div>')
+    }
+
+    socket.on('previousMessage', function (messages) {
+        for(message of messages ) {
+            renderMessage(message)
+        }
+    })
+
+    socket.on('receivedMessage', function (message) {
+        renderMessage(message)       
+    })
+
+    $('#chat').submit(function (event) {
+        event.preventDefault()
+
+        var author = $('input[name=username]').val()
+        var message = $('input[name=message]').val()
+
+        if (author.length && message.length) {
+            var messageObject = {
+                author: author,
+                message: message,
+            }
+        }
+
+        renderMessage(messageObject)
+        socket.emit('sendMessage', messageObject)
+    })
+
+    const floating_btn = document.querySelector('.floating-btn');
+const close_btn = document.querySelector('.close-btn');
+const social_panel_container = document.querySelector('.social-panel-container');
+
+floating_btn.addEventListener('click', () => {
+	social_panel_container.classList.toggle('visible')
+});
+
+close_btn.addEventListener('click', () => {
+	social_panel_container.classList.remove('visible')
+});
+
+    </script>
+    
+</body>
+</html>
